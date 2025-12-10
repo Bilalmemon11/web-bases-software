@@ -1,0 +1,27 @@
+
+.sortable-table thead tr th:not(.no-sort) {
+    position: relative;
+    cursor: pointer;
+}
+
+.sortable-table thead tr th:after {
+    position: absolute;
+    top:50%;
+    right: 2px;
+    transform: translateY(-50%);
+    content: "\25be";
+    opacity: 0;
+}
+.sortable-table thead tr th:not(.no-sort):hover::after {
+    opacity: 0.5;
+}
+
+.sortable-table thead tr th.sort-asc:after {
+    content: "\25b4";
+    opacity: 1;
+}
+
+.sortable-table thead tr th.sort-desc:after {
+    content: "\25be";
+    opacity: 1;
+}
