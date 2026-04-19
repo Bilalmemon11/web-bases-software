@@ -62,6 +62,9 @@
                 <button class="btn w-100 btn-outline-secondary mt-1" data-bs-toggle="modal" data-bs-target="#editProjectModal-{{ $project->id }}" title="Edit Project">
                     <i class="fas fa-edit"></i> Edit Project
                 </button>
+                <button class="btn w-100 btn-outline-danger mt-1" data-bs-toggle="modal" data-bs-target="#deleteProjectModal-{{ $project->id }}" title="Delete Project">
+                    <i class="fas fa-trash-alt"></i> Delete Project
+                </button>
             </div>
         </div>
     </div>
@@ -172,8 +175,40 @@
                     </button>
                 </div>
             </form>
+</div>
+</div>
+</div>
+@endforeach
+
+{{-- Delete Project Modal --}}
+@foreach($projects as $project)
+<div class="modal fade" id="deleteProjectModal-{{ $project->id }}" tabindex="-1" aria-labelledby="deleteProjectModalLabel-{{ $project->id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('projects.destroy', $project->id) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger" id="deleteProjectModalLabel-{{ $project->id }}">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Confirm Delete
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the project <strong>{{ $project->name }}</strong>? This action will:</p>
+                    <ul class="mb-0">
+                        <li>Remove all units, expenses, sales and reports of this project</li>
+                        <li>Unset client associations with this project</li>
+                    </ul>
+                    <p class="mt-2 mb-0 text-muted">This cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt me-1"></i> Delete Project</button>
+                </div>
+            </form>
         </div>
     </div>
-</div>
+    </div>
 @endforeach
 @endsection

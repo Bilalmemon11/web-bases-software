@@ -18,6 +18,8 @@ return new class extends Migration {
             $table->enum('status', ['reserved', 'sold', 'cancelled'])->default('reserved');
             $table->string('payment_method')->nullable();
             $table->date('sale_date')->nullable();
+            $table->boolean('has_installments')->default(false)->after('status');
+            $table->integer('installment_count')->nullable()->after('has_installments');
             $table->timestamps();
 
             $table->index(['project_id', 'client_id']);
