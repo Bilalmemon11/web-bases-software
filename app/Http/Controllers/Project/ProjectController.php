@@ -410,48 +410,4 @@ class ProjectController extends Controller
 
         return redirect()->back()->with('success', 'Project updated successfully!');
     }
-
-    public function destroy(Project $project)
-    {
-        DB::transaction(function () use ($project) {
-            // Delete project-specific sales (payments and sale_units will cascade)
-            $project->sales()->each(function ($sale) {
-                $sale->delete();
-            });
-
-            // Delete units associated with the project
-            $project->units()->each(function ($unit) {
-                $unit->delete();
-            });
-
-            // Delete expenses associated with the project
-            $project->expenses()->each(function ($expense) {
-                $expense->delete();
-            });
-
-            // Delete generated reports for the project
-            $project->reports()->each(function ($report) {
-                $report->delete();
-            });
-
-            // Detach members from the project (pivot will cascade but explicit detach is safe)
-            $project->members()->detach();
-
-            // Clear active project session if this project is active
-            if (session('active_project_id') === $project->id) {
-                session()->forget([
-                    'active_project_id',
-                    'active_project_name',
-                    'active_project_start_date',
-                    'active_project_status',
-                    'active_project_slug',
-                ]);
-            }
-
-            // Finally, delete the project
-            $project->delete();
-        });
-
-        return redirect()->route('projects.index')->with('success', 'Project deleted successfully.');
-    }
 }

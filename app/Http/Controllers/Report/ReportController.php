@@ -278,21 +278,10 @@ class ReportController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        // Load all necessary relationships
-        $sale->load(['client', 'units', 'payments', 'installments']);
+        $sale->load(['client', 'units', 'payments']);
 
-        // Generate PDF
-        $pdf = Pdf::loadView('reports.pdf.single-sale', compact('project', 'sale'))
-            ->setPaper('a4', 'portrait')
-            ->setOptions([
-                'isHtml5ParserEnabled' => true,
-                'isRemoteEnabled' => false,
-                'defaultFont' => 'DejaVu Sans',
-            ]);
-
-        $filename = "sale-{$sale->id}-{$sale->client->name}-" . date('Y-m-d') . ".pdf";
-        
-        return $pdf->download($filename);
+        $pdf = Pdf::loadView('reports.pdf.single-sale', compact('project', 'sale'));
+        return $pdf->download("sale-{$sale->id}-report-" . date('Y-m-d') . ".pdf");
     }
 
     /**

@@ -5,7 +5,6 @@ use App\Http\Controllers\Expense\ExpenseController;
 use App\Http\Controllers\Member\MemberController;
 use App\Http\Controllers\Project\ProjectController;
 use App\Http\Controllers\Report\ReportController;
-use App\Http\Controllers\Sale\PaymentController;
 use App\Http\Controllers\Sale\SaleController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\Unit\UnitController;
@@ -17,7 +16,6 @@ Route::controller(ProjectController::class)->group(function () {
     Route::post('/project/store', [ProjectController::class, 'store'])->name('projects.store');
     Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
     Route::put('/projects/{project}', 'update')->name('projects.update');
-    Route::delete('/projects/{project}', 'destroy')->name('projects.destroy');
 });
 
 Route::prefix('{project:slug}')->middleware('project.session')->group(function () {
@@ -50,13 +48,6 @@ Route::prefix('{project:slug}')->middleware('project.session')->group(function (
         });
     });
     Route::resource('sales', SaleController::class);
-    Route::prefix('sales/{sale}')->name('sales.')->group(function () {
-        Route::get('/payments/create', [PaymentController::class, 'create'])->name('payments.create');
-        Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
-        Route::get('/payments/{payment}/edit', [PaymentController::class, 'edit'])->name('payments.edit');
-        Route::put('/payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
-        Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
-    });
     Route::resource('clients', ClientController::class)->except(['create', 'edit']);
     Route::prefix('Reports')->group(function () {
         Route::controller(ReportController::class)->group(function () {
