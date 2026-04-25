@@ -53,7 +53,7 @@
                                 <a href="{{ route('sales.show', [$project->slug,$sale->id]) }}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i></a>
                                 <a href="{{ route('sales.edit', [$project->slug,$sale->id]) }}" class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></a>
                                 <button class="btn btn-sm btn-outline-danger" onclick="deleteModal('deleteModal','{{ route('sales.destroy', [$project->slug, $sale->id]) }}','Are you sure to delete this sale?')"><i class="fas fa-trash"></i></button>
-                                <a class="btn btn-sm btn-primary" href="{{ route('reports.sale', [session('active_project_slug'),$sale]) }}">
+                                <a class="btn btn-sm btn-primary" href="{{ route('sales.report', [$project->slug, $sale->id]) }}">
                                     <i class="fas fa-file-alt"></i>
                                 </a>
                             </td>

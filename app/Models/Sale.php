@@ -13,7 +13,6 @@ class Sale extends Model
         'project_id',
         'client_id',
         'total_amount',
-        'paid_amount',
         'status',
         'discount',
         'payment_method',
@@ -24,7 +23,10 @@ class Sale extends Model
         'sale_date' => 'date',
     ];
 
+    // ----------------------------------------------------------------
     // Relationships
+    // ----------------------------------------------------------------
+
     public function project()
     {
         return $this->belongsTo(Project::class);
@@ -37,33 +39,58 @@ class Sale extends Model
 
     public function units()
     {
-        return $this->belongsToMany(Unit::class, 'sale_units') // 👈 same fix here
+        return $this->belongsToMany(Unit::class, 'sale_units')
             ->withPivot('unit_price')
             ->withTimestamps();
     }
 
     public function payments()
     {
-        return $this->hasMany(Payment::class);
+        return $this->hasMany(Payment::class)->orderBy('payment_date');
     }
 
-    // Computed helpers
-    public function getRemainingAmountAttribute()
+    // ----------------------------------------------------------------
+    // Computed Attributes
+    // ----------------------------------------------------------------
+
+    /**
+     * Total actually paid — sum of all payment records.
+     */
+    public function getPaidAmountAttribute(): float
     {
-        return $this->total_amount - $this->paid_amount - $this->discount;
+        return (float) $this->payments()->sum('amount');
     }
 
-    public function getIsFullyPaidAttribute()
-    {
-        return $this->remaining_amount <= 0;
-    }
-    public function getNetAmountAttribute()
+    /**
+     * Net amount after discount.
+     */
+    public function getNetAmountAttribute(): float
     {
         return max(0, $this->total_amount - $this->discount);
     }
 
-    public function getPendingAmountAttribute()
+    /**
+     * Outstanding balance.
+     */
+    public function getRemainingAmountAttribute(): float
     {
         return max(0, $this->net_amount - $this->paid_amount);
+    }
+
+    /**
+     * Is the sale fully paid?
+     */
+    public function getIsFullyPaidAttribute(): bool
+    {
+        return $this->remaining_amount <= 0;
+    }
+
+    /**
+     * Payment progress as a percentage.
+     */
+    public function getPaymentProgressAttribute(): float
+    {
+        if ($this->net_amount <= 0) return 100;
+        return round(($this->paid_amount / $this->net_amount) * 100, 1);
     }
 }

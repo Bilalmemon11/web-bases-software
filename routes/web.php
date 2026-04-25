@@ -5,6 +5,7 @@ use App\Http\Controllers\Expense\ExpenseController;
 use App\Http\Controllers\Member\MemberController;
 use App\Http\Controllers\Project\ProjectController;
 use App\Http\Controllers\Report\ReportController;
+use App\Http\Controllers\Sale\PaymentController;
 use App\Http\Controllers\Sale\SaleController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\Unit\UnitController;
@@ -48,6 +49,17 @@ Route::prefix('{project:slug}')->middleware('project.session')->group(function (
         });
     });
     Route::resource('sales', SaleController::class);
+        // ── Payments (nested under a sale) ─────────────────────────────────
+    Route::prefix('sales/{sale}/payments')->name('payments.')->group(function () {
+        Route::get('create',          [PaymentController::class, 'create'])->name('create');
+        Route::post('/',              [PaymentController::class, 'store'])->name('store');
+        Route::get('{payment}/edit',  [PaymentController::class, 'edit'])->name('edit');
+        Route::put('{payment}',       [PaymentController::class, 'update'])->name('update');
+        Route::delete('{payment}',    [PaymentController::class, 'destroy'])->name('destroy');
+    });
+ 
+    // ── Sale Report ────────────────────────────────────────────────────
+    Route::get('sales/{sale}/report', [SaleController::class, 'report'])->name('sales.report');
     Route::resource('clients', ClientController::class)->except(['create', 'edit']);
     Route::prefix('Reports')->group(function () {
         Route::controller(ReportController::class)->group(function () {
